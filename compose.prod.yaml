@@ -1,0 +1,8 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      APP_ENV: prod
+    volumes: []

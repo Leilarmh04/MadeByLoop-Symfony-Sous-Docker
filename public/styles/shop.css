@@ -1,0 +1,41 @@
+/* SECTION HERO */
+.shop-hero {
+    text-align: center;
+    padding: 30px 20px;
+}
+
+.shop-hero h1 {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.shop-hero p {
+    opacity: 0.7;
+}
+
+/* GRILLE PRODUITS */
+.shop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.product-card {
+    background: white;
+    padding: 15px;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+.product-card img {
+    width: 100%;
+    border-radius: 12px;
+}
+
+.price {
+    font-weight: 700;
+    margin-top: 10px;
+    display: block;
+}

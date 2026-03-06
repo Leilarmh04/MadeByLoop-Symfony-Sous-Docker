@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}MadeByLoop{% endblock %}</title>
+
+    {# Ton fichier CSS global #}
+    <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
+
+    {% block stylesheets %}{% endblock %}
+
+</head>
+
+<body>
+
+    {# ===========================
+       HEADER — zone haute du site
+       =========================== #}
+    <header class="header">
+        <div class="header-inner">
+
+            {# Logo (tu mettras ton image ici) #}
+            {# <img src="{{ asset('images/ton-logo.png') }}" alt="Logo MadeByLoop"> #}
+            {# <div class="logo">MadeByLoop</div> #}
+
+            {# Menu simple (tu peux changer les liens plus tard) #}
+            <nav class="nav">
+                <a href="{{ path('app_login') }}">Se connecter</a>
+                <a href="{{ path('app_register') }}">S'inscrire</a>
+                <a href="{{ path('app_logout') }}">Se déconnecter</a>
+            </nav>
+        </div>
+    </header>
+
+
+    {# ===========================
+       BODY — contenu des pages
+       =========================== #}
+    <main class="content">
+
+        {# les sections maquette :
+           - bannière (image)
+           - texte d’introduction
+           - catégories
+           - produits
+           - etc.
+        #}
+
+        {% block body %}{% endblock %}
+    </main>
+
+
+    {# ===========================
+       FOOTER — bas de page
+       =========================== #}
+    <footer class="footer">
+
+       
+
+        <p>© {{ "now"|date("Y") }} MadeByLoop — Tous droits réservés</p>
+    </footer>
+
+</body>
+</html>

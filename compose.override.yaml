@@ -1,0 +1,6 @@
+services:
+  php:
+    environment:
+      APP_ENV: dev
+    ports:
+      - "9000:9000"

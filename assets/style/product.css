@@ -1,0 +1,156 @@
+.product-page {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: 'Georgia', serif;
+  background: #FAF7F2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.product-image-wrapper {
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  background: #E8E0D0;
+}
+
+.product-main-image {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+
+.product-no-image {
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #B3A582;
+  font-size: 14px;
+}
+
+.product-category {
+  font-size: 12px;
+  color: #B3A582;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 6px;
+}
+
+.product-name {
+  font-size: 24px;
+  font-weight: normal;
+  margin: 0 0 8px;
+  color: #3a3028;
+}
+
+.product-price {
+  font-size: 20px;
+  color: #B3A582;
+  font-weight: 600;
+  margin: 0 0 16px;
+}
+
+.product-divider {
+  border: none;
+  border-top: 1px solid #E0D8CC;
+  margin: 16px 0;
+}
+
+.product-description {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.product-seller {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.seller-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #F0EBE0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.seller-label {
+  font-size: 11px;
+  color: #aaa;
+  display: block;
+}
+
+.seller-name {
+  font-size: 14px;
+  color: #3a3028;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.seller-name:hover {
+  color: #B3A582;
+}
+
+.product-date {
+  font-size: 12px;
+  color: #aaa;
+  margin: 0;
+}
+
+.product-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.btn-cart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #B3A582;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 15px;
+  font-family: 'Georgia', serif;
+  cursor: pointer;
+  width: 100%;
+}
+
+.btn-cart:hover {
+  background: #9e9070;
+}
+
+.btn-back {
+  text-align: center;
+  font-size: 13px;
+  color: #B3A582;
+  text-decoration: none;
+  padding: 10px;
+}
+
+.btn-back:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .product-page {
+    grid-template-columns: 1fr;
+    margin: 20px auto;
+  }
+}

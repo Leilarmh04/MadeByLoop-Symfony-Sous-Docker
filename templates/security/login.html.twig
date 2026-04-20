@@ -8,12 +8,12 @@
 
     {% if error %}
         <div class="alert alert-danger">
-            Identifiants incorrects.
+            {{ error.messageKey | trans(error.messageData, 'security') }}
         </div>
     {% endif %}
 
-    <form method="post">
-        <label for="inputEmail">Adresse email</label>
+    <form method="post" action="{{ path('app_login') }}">
+        <label for="in<form method="post">putEmail">Adresse email</label>
         <input type="email" name="email" id="inputEmail" value="{{ last_username }}" required autofocus>
 
         <label for="inputPassword">Mot de passe</label>

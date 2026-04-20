@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ asset('style/profile.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<div class="profile-container">
+
+  <!-- HEADER PROFIL -->
+  <div class="profile-header">
+    <div class="profile-avatar">
+      <img src="{{ asset('images/default-avatar.png') }}" alt="Photo de profil">
+    </div>
+
+    <div class="profile-info">
+      <h1 class="profile-username">{{ user.username ?? user.email }}</h1>
+
+      <div class="profile-stats">
+        <span><strong>{{ user.products|length }}</strong> publications</span>
+        <span><strong>0</strong> followers</span>
+        <span><strong>0</strong> suivis</span>
+      </div>
+
+      <p class="profile-bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+
+      <div class="profile-socials">
+        <span>@Twitter</span>
+        <span>@Instagram</span>
+      </div>
+
+      <div class="profile-actions">
+        <button class="btn-follow">Suivre</button>
+        <button class="btn-message">Message</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ONGLETS -->
+  <div class="profile-tabs">
+    <button class="tab active">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+      </svg>
+    </button>
+    <button class="tab">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+        <rect x="9" y="3" width="6" height="4" rx="1"/>
+      </svg>
+    </button>
+    <button class="tab">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+      </svg>
+    </button>
+  </div>
+
+  <hr class="profile-divider">
+
+  <!-- CONTENU -->
+  {% if user.sellerRole in ['seller', 'both'] and user.products|length > 0 %}
+    <div class="profile-grid">
+      {% for product in user.products %}
+        <div class="product-card">
+          <img src="{{ asset('images/products/' ~ product.image) }}" alt="{{ product.name }}">
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="profile-empty">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1">
+        <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+      <h2>partagez vos première création</h2>
+      <p>Lorsque vous partagez vos créations, elles apparaissent sur votre profil.</p>
+      {% if user.sellerRole in ['seller', 'both'] %}
+        <a href="{{ path('app_product_new') }}" class="btn-share">partager mes créations</a>
+      {% endif %}
+    </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}

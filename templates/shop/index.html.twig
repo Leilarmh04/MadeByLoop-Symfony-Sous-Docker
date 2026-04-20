@@ -1,45 +1,15 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Boutique{% endblock %}
-
-{% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('styles/shop.css') }}">
-{% endblock %}
-
-{% block body %}
-
-<section class="shop-hero">
-    {# Image bannière de la boutique #}
-    {# <img src="{{ asset('images/shop-banner.jpg') }}" alt="Bannière Boutique"> #}
-
-    <h1>Nos créations</h1>
-    <p>Découvrez toutes les pièces crochet faites main.</p>
-</section>
-
-<section class="shop-grid">
-    {# Carte produit 1 #}
+{% for product in products %}
     <div class="product-card">
-        {# <img src="{{ asset('images/produit1.jpg') }}" alt="Produit 1"> #}
-        <h3>Nom du produit</h3>
-        <p>Description courte</p>
-        <span class="price">XX €</span>
+        {% if product.image %}
+            <img src="{{ asset('images/products/' ~ product.image) }}" alt="{{ product.name }}">
+        {% else %}
+            <div class="product-no-image">Pas d'image</div>
+        {% endif %}
+        <h3>{{ product.name }}</h3>
+        <p>{{ product.description }}</p>
+        <span class="price">{{ product.price }} €</span>
+        <a href="{{ path('app_product_show', {id: product.id}) }}">Voir le produit</a>
     </div>
-
-    {# Carte produit 2 #}
-    <div class="product-card">
-        {# <img src="{{ asset('images/produit2.jpg') }}" alt="Produit 2"> #}
-        <h3>Nom du produit</h3>
-        <p>Description courte</p>
-        <span class="price">XX €</span>
-    </div>
-
-    {# Carte produit 3 #}
-    <div class="product-card">
-        {# <img src="{{ asset('images/produit3.jpg') }}" alt="Produit 3"> #}
-        <h3>Nom du produit</h3>
-        <p>Description courte</p>
-        <span class="price">XX €</span>
-    </div>
-</section>
-
-{% endblock %}
+{% else %}
+    <p>Aucun produit disponible pour le moment.</p>
+{% endfor %}

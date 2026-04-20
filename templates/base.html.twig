@@ -16,14 +16,10 @@
     {# ===========================
        HEADER — zone haute du site
        =========================== #}
+       
+    {% block header %}
     <header class="header">
         <div class="header-inner">
-
-            {# Logo (tu mettras ton image ici) #}
-            {# <img src="{{ asset('images/ton-logo.png') }}" alt="Logo MadeByLoop"> #}
-            {# <div class="logo">MadeByLoop</div> #}
-
-            {# Menu simple (tu peux changer les liens plus tard) #}
             <nav class="nav">
                 <a href="{{ path('app_login') }}">Se connecter</a>
                 <a href="{{ path('app_register') }}">S'inscrire</a>
@@ -31,6 +27,7 @@
             </nav>
         </div>
     </header>
+    {% endblock %}
 
 
     {# ===========================

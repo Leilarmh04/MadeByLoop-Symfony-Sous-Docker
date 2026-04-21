@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/product.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="form-container">
+    <h1>Modifier : {{ product.name }}</h1>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button type="submit" class="btn">Enregistrer</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('app_my_products') }}" class="back-link">← Retour à mes produits</a>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/product.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="my-products-header">
+    <h1>Mes produits</h1>
+    <a href="{{ path('app_product_new') }}" class="btn">+ Ajouter un produit</a>
+</div>
+
+{% for message in app.flashes('success') %}
+    <div class="flash-success">{{ message }}</div>
+{% endfor %}
+
+{% if products|length > 0 %}
+    <div class="product-grid">
+        {% for product in products %}
+            <div class="product-card">
+                {% if product.image %}
+                    <img src="{{ asset('images/products/' ~ product.image) }}" alt="{{ product.name }}">
+                {% else %}
+                    <div class="no-image">Pas d'image</div>
+                {% endif %}
+
+                <div class="product-card-body">
+                    <h3>{{ product.name }}</h3>
+                    <p class="price">{{ product.price }} €</p>
+                    <p class="category">{{ product.category.name }}</p>
+                </div>
+
+                <div class="product-actions">
+                    <a href="{{ path('app_product_edit', {id: product.id}) }}" class="btn">Modifier</a>
+                    <form method="post" action="{{ path('app_product_delete', {id: product.id}) }}" onsubmit="return confirm('Supprimer ce produit ?')">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <p>Tu n'as pas encore de produits.</p>
+        <a href="{{ path('app_product_new') }}" class="btn">Ajouter ton premier article</a>
+    </div>
+{% endif %}
+{% endblock %}

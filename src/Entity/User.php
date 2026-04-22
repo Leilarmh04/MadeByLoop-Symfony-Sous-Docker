@@ -74,6 +74,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $username = null;
 
+    /**
+     * @var Collection<int, Product>
+     */
+    #[ORM\ManyToMany(targetEntity: Product::class)]
+    #[ORM\JoinTable(name: 'user_favorites')]
+    private Collection $favorites;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -82,6 +89,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->sellerConversations = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->reviews = new ArrayCollection();
+        $this->favorites = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -107,12 +115,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
-        // Si aucun rôle n'est défini, on renvoie ROLE_USER
         if (empty($this->roles)) {
             return ['ROLE_USER'];
         }
-
-        // Sinon on renvoie exactement ce qui est stocké
         return $this->roles;
     }
 
@@ -146,7 +151,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
-        // Pour effacer des données sensibles si besoin
     }
 
     /**
@@ -163,19 +167,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->products->add($product);
             $product->setSeller($this);
         }
-
         return $this;
     }
 
     public function removeProduct(Product $product): static
     {
         if ($this->products->removeElement($product)) {
-            // set the owning side to null (unless already changed)
             if ($product->getSeller() === $this) {
                 $product->setSeller(null);
             }
         }
-
         return $this;
     }
 
@@ -186,13 +187,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setCart(Cart $cart): static
     {
-        // set the owning side of the relation if necessary
         if ($cart->getUser() !== $this) {
             $cart->setUser($this);
         }
-
         $this->cart = $cart;
-
         return $this;
     }
 
@@ -210,19 +208,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->orders->add($order);
             $order->setBuyer($this);
         }
-
         return $this;
     }
 
     public function removeOrder(Order $order): static
     {
         if ($this->orders->removeElement($order)) {
-            // set the owning side to null (unless already changed)
             if ($order->getBuyer() === $this) {
                 $order->setBuyer(null);
             }
         }
-
         return $this;
     }
 
@@ -240,19 +235,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->conversations->add($conversation);
             $conversation->setBuyer($this);
         }
-
         return $this;
     }
 
     public function removeConversation(Conversation $conversation): static
     {
         if ($this->conversations->removeElement($conversation)) {
-            // set the owning side to null (unless already changed)
             if ($conversation->getBuyer() === $this) {
                 $conversation->setBuyer(null);
             }
         }
-
         return $this;
     }
 
@@ -270,19 +262,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->sellerConversations->add($sellerConversation);
             $sellerConversation->setSeller($this);
         }
-
         return $this;
     }
 
     public function removeSellerConversation(Conversation $sellerConversation): static
     {
         if ($this->sellerConversations->removeElement($sellerConversation)) {
-            // set the owning side to null (unless already changed)
             if ($sellerConversation->getSeller() === $this) {
                 $sellerConversation->setSeller(null);
             }
         }
-
         return $this;
     }
 
@@ -300,19 +289,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->messages->add($message);
             $message->setSender($this);
         }
-
         return $this;
     }
 
     public function removeMessage(Message $message): static
     {
         if ($this->messages->removeElement($message)) {
-            // set the owning side to null (unless already changed)
             if ($message->getSender() === $this) {
                 $message->setSender(null);
             }
         }
-
         return $this;
     }
 
@@ -330,19 +316,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->reviews->add($review);
             $review->setUser($this);
         }
-
         return $this;
     }
 
     public function removeReview(Review $review): static
     {
         if ($this->reviews->removeElement($review)) {
-            // set the owning side to null (unless already changed)
             if ($review->getUser() === $this) {
                 $review->setUser(null);
             }
         }
-
         return $this;
     }
 
@@ -354,7 +337,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUsername(?string $username): static
     {
         $this->username = $username;
-
         return $this;
+    }
+
+    public function getFavorites(): Collection
+    {
+        return $this->favorites;
+    }
+
+    public function addFavorite(Product $product): static
+    {
+        if (!$this->favorites->contains($product)) {
+            $this->favorites->add($product);
+        }
+        return $this;
+    }
+
+    public function removeFavorite(Product $product): static
+    {
+        $this->favorites->removeElement($product);
+        return $this;
+    }
+
+    public function isFavorite(Product $product): bool
+    {
+        return $this->favorites->contains($product);
     }
 }

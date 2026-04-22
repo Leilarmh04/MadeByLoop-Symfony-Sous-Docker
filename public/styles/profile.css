@@ -60,6 +60,8 @@
   border-radius: 6px;
   font-size: 13px;
   cursor: pointer;
+  text-decoration: none;
+  color: #333;
 }
 
 .profile-tabs {
@@ -119,7 +121,7 @@
   gap: 4px;
 }
 
-.product-card img {
+.profile-grid .product-card img {
   width: 100%;
   aspect-ratio: 1;
   object-fit: cover;

@@ -1,4 +1,4 @@
-/* ========== MES PRODUITS ========== */
+/* ========== MES PRODUITS / BOUTIQUE / FAVORIS ========== */
 .my-products-header {
     display: flex;
     justify-content: space-between;
@@ -37,7 +37,6 @@
     background: #a93226;
 }
 
-/* FLASH MESSAGES */
 .flash-success {
     background: #d4edda;
     color: #155724;
@@ -47,7 +46,6 @@
     border: 1px solid #c3e6cb;
 }
 
-/* GRILLE DE PRODUITS */
 .product-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -107,7 +105,6 @@
     padding: 8px 16px;
 }
 
-/* IMAGE PLACEHOLDER */
 .no-image {
     width: 100%;
     height: 220px;
@@ -119,7 +116,6 @@
     font-size: 14px;
 }
 
-/* EMPTY STATE */
 .empty-state {
     text-align: center;
     padding: 60px 20px;
@@ -201,6 +197,184 @@
     color: #9c8f6e;
 }
 
+/* ========== PAGE DETAIL PRODUIT ========== */
+.product-page {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    font-family: 'Georgia', serif;
+    background: #FAF7F2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+.product-image-wrapper {
+    width: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    background: #E8E0D0;
+}
+
+.product-main-image {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+}
+
+.product-no-image {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #B3A582;
+    font-size: 14px;
+}
+
+.product-category {
+    font-size: 12px;
+    color: #B3A582;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 6px;
+}
+
+.product-name {
+    font-size: 24px;
+    font-weight: normal;
+    margin: 0 0 8px;
+    color: #3a3028;
+}
+
+.product-price {
+    font-size: 20px;
+    color: #B3A582;
+    font-weight: 600;
+    margin: 0 0 16px;
+}
+
+.product-divider {
+    border: none;
+    border-top: 1px solid #E0D8CC;
+    margin: 16px 0;
+}
+
+.product-description {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.product-seller {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.seller-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #F0EBE0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.seller-label {
+    font-size: 11px;
+    color: #aaa;
+    display: block;
+}
+
+.seller-name {
+    font-size: 14px;
+    color: #3a3028;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.seller-name:hover {
+    color: #B3A582;
+}
+
+.product-date {
+    font-size: 12px;
+    color: #aaa;
+    margin: 0;
+}
+
+.product-actions-show {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.btn-cart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #B3A582;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 15px;
+    font-family: 'Georgia', serif;
+    cursor: pointer;
+    width: 100%;
+}
+
+.btn-cart:hover {
+    background: #9e9070;
+}
+
+.btn-favorite {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: 2px solid #B3A582;
+    border-radius: 10px;
+    color: #B3A582;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    font-family: 'Georgia', serif;
+    transition: all 0.3s;
+    background: white;
+    width: 100%;
+}
+
+.btn-favorite:hover {
+    background: #f5f0e8;
+}
+
+.btn-favorite.is-favorite {
+    border-color: #c0392b;
+    color: #c0392b;
+}
+
+.btn-back {
+    text-align: center;
+    font-size: 13px;
+    color: #B3A582;
+    text-decoration: none;
+    padding: 10px;
+}
+
+.btn-back:hover {
+    text-decoration: underline;
+}
+
 /* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
     .product-grid {
@@ -211,6 +385,11 @@
         flex-direction: column;
         gap: 12px;
         align-items: flex-start;
+    }
+
+    .product-page {
+        grid-template-columns: 1fr;
+        margin: 20px auto;
     }
 }
 

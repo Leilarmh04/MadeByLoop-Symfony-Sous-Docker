@@ -1,24 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Boutique{% endblock %}
-
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('styles/product.css') }}">
 {% endblock %}
 
 {% block body %}
 <div class="my-products-header">
-    <h1>Boutique</h1>
+    <h1>Mes favoris</h1>
 </div>
 
-{% if products|length > 0 %}
+{% if favorites|length > 0 %}
     <div class="product-grid">
-        {% for product in products %}
+        {% for product in favorites %}
             <div class="product-card">
                 {% if product.image %}
-                    <a href="{{ path('app_product_show', {id: product.id}) }}">
-                        <img src="{{ asset('images/products/' ~ product.image) }}" alt="{{ product.name }}">
-                    </a>
+                    <img src="{{ asset('images/products/' ~ product.image) }}" alt="{{ product.name }}">
                 {% else %}
                     <div class="no-image">Pas d'image</div>
                 {% endif %}
@@ -31,18 +27,14 @@
 
                 <div class="product-actions">
                     <a href="{{ path('app_product_show', {id: product.id}) }}" class="btn">Voir</a>
-                    {% if app.user %}
-                        <a href="{{ path('app_favorite_toggle', {id: product.id}) }}" class="btn {{ app.user.isFavorite(product) ? 'btn-danger' : '' }}">
-                            {{ app.user.isFavorite(product) ? '♥' : '♡' }}
-                        </a>
-                    {% endif %}
+                    <a href="{{ path('app_favorite_toggle', {id: product.id}) }}" class="btn btn-danger">Retirer</a>
                 </div>
             </div>
         {% endfor %}
     </div>
 {% else %}
     <div class="empty-state">
-        <p>Aucun produit disponible pour le moment.</p>
+        <p>Tu n'as pas encore de favoris.</p>
     </div>
 {% endif %}
 {% endblock %}

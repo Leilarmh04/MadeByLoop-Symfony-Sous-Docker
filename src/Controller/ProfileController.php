@@ -2,8 +2,7 @@
 
 namespace App\Controller;
 
-use App\Form\ProductFormType;
-use App\Entity\Product;
+use App\Form\ProfileFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,45 +21,23 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/product/new', name: 'app_product_new')]
+    #[Route('/profile/edit', name: 'app_profile_edit')]
     #[IsGranted('ROLE_USER')]
-    public function newProduct(Request $request, EntityManagerInterface $em): Response
-{
-    /** @var \App\Entity\User $user */
-    $user = $this->getUser();
+    public function edit(Request $request, EntityManagerInterface $em): Response
+    {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        $form = $this->createForm(ProfileFormType::class, $user);
+        $form->handleRequest($request);
 
-    // Vérifie que l'utilisateur est bien vendeur
-    if (!in_array($user->getSellerRole(), ['seller', 'both'])) {
-        throw $this->createAccessDeniedException('Vous devez être vendeur pour ajouter un produit.');
-    }
-
-    $product = new Product();
-    $form = $this->createForm(ProductFormType::class, $product);
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted() && $form->isValid()) {
-        $imageFile = $form->get('imageFile')->getData();
-        if ($imageFile) {
-            $newFilename = uniqid() . '.' . $imageFile->guessExtension();
-            $imageFile->move(
-                $this->getParameter('kernel.project_dir') . '/public/images/products',
-                $newFilename
-            );
-            $product->setImage($newFilename);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            $this->addFlash('success', 'Profil mis à jour !');
+            return $this->redirectToRoute('app_profile');
         }
 
-        $product->setSeller($user);
-        $product->setCreatedAt(new \DateTimeImmutable());
-
-        $em->persist($product);
-        $em->flush();
-
-        $this->addFlash('success', 'Produit ajouté avec succès !');
-        return $this->redirectToRoute('app_profile');
+        return $this->render('profile/edit.html.twig', [
+            'form' => $form,
+        ]);
     }
-
-    return $this->render('profile/new_product.html.twig', [
-        'productForm' => $form->createView(),
-    ]);
-}
 }

@@ -4,7 +4,7 @@
 
 {% block stylesheets %}
   {{ parent() }}
-  <link rel="stylesheet" href="{{ asset('style/product.css') }}">
+  <link rel="stylesheet" href="{{ asset('styles/product.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -51,13 +51,23 @@
     <p class="product-date">Publié le {{ product.createdAt | date('d/m/Y') }}</p>
 
     <!-- ACTIONS -->
-    <div class="product-actions">
+    <div class="product-actions-show">
       <button class="btn-cart">
         <svg width="18" height="18" viewBox="0 0 43 43" fill="none">
           <path fill-rule="evenodd" clip-rule="evenodd" d="M16.125 14.333C16.125 12.908 16.691 11.541 17.699 10.533C18.707 9.525 20.074 8.958 21.5 8.958C22.926 8.958 24.293 9.525 25.301 10.533C26.309 11.541 26.875 12.908 26.875 14.333H16.125ZM12.542 14.333C12.542 11.957 13.486 9.679 15.166 7.999C16.846 6.319 19.124 5.375 21.5 5.375C23.876 5.375 26.155 6.319 27.835 7.999C29.515 9.679 30.458 11.957 30.458 14.333H35.833C36.082 14.333 36.328 14.385 36.556 14.486C36.784 14.586 36.988 14.733 37.156 14.916C37.324 15.1 37.452 15.317 37.531 15.553C37.611 15.789 37.64 16.038 37.618 16.286L36.122 32.737C36 34.073 35.384 35.315 34.394 36.219C33.404 37.123 32.111 37.625 30.77 37.625H12.23C10.889 37.625 9.596 37.123 8.606 36.219C7.616 35.315 7 34.073 6.878 32.737L5.382 16.286C5.36 16.038 5.389 15.789 5.469 15.553C5.548 15.317 5.676 15.1 5.844 14.916C6.012 14.733 6.216 14.586 6.444 14.486C6.672 14.385 6.918 14.333 7.167 14.333H12.542Z" fill="white"/>
         </svg>
         Ajouter au panier
       </button>
+
+      {% if app.user %}
+        <a href="{{ path('app_favorite_toggle', {id: product.id}) }}" class="btn-favorite {{ app.user.isFavorite(product) ? 'is-favorite' : '' }}">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="{{ app.user.isFavorite(product) ? '#c0392b' : 'none' }}" stroke="{{ app.user.isFavorite(product) ? '#c0392b' : '#B3A582' }}" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+          </svg>
+          {{ app.user.isFavorite(product) ? 'Retirer des favoris' : 'Ajouter aux favoris' }}
+        </a>
+      {% endif %}
+
       <a href="{{ path('app_shop') }}" class="btn-back">← Retour</a>
     </div>
 

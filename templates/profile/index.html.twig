@@ -4,7 +4,7 @@
 
 {% block stylesheets %}
   {{ parent() }}
-  <link rel="stylesheet" href="{{ asset('style/profile.css') }}">
+  <link rel="stylesheet" href="{{ asset('styles/profile.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -34,8 +34,13 @@
       </div>
 
       <div class="profile-actions">
-        <button class="btn-follow">Suivre</button>
-        <button class="btn-message">Message</button>
+        {% if app.user == user %}
+          <a href="{{ path('app_profile_edit') }}" class="btn-follow">Modifier le profil</a>
+          <a href="{{ path('app_my_products') }}" class="btn-message">Mes produits</a>
+        {% else %}
+          <button class="btn-follow">Suivre</button>
+          <button class="btn-message">Message</button>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -68,7 +73,9 @@
     <div class="profile-grid">
       {% for product in user.products %}
         <div class="product-card">
-          <img src="{{ asset('images/products/' ~ product.image) }}" alt="{{ product.name }}">
+            <a href="{{ path('app_product_show', {id: product.id}) }}">
+                <img src="{{ asset('images/products/' ~ product.image) }}" alt="{{ product.name }}">
+            </a>
         </div>
       {% endfor %}
     </div>

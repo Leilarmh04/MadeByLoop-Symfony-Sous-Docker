@@ -25,6 +25,21 @@
 
     <p class="product-category">{{ product.category.name }}</p>
     <h1 class="product-name">{{ product.name }}</h1>
+
+    {# Note moyenne #}
+    {% if reviews|length > 0 %}
+      <div class="product-rating-summary">
+        <div class="stars-display">
+          {% for i in 1..5 %}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="{{ i <= averageRating|round ? '#E8B931' : 'none' }}" stroke="#E8B931" stroke-width="1.5">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          {% endfor %}
+        </div>
+        <span class="rating-text">{{ averageRating }}/5 ({{ reviews|length }} avis)</span>
+      </div>
+    {% endif %}
+
     <p class="product-price">{{ product.price }} €</p>
 
     <hr class="product-divider">
@@ -42,7 +57,7 @@
       </div>
       <div class="seller-info">
         <span class="seller-label">Vendu par</span>
-        <a href="#" class="seller-name">{{ product.seller.username ?? product.seller.email }}</a>
+        <a href="{{ path('app_profile_public', {id: product.seller.id}) }}" class="seller-name">{{ product.seller.username ?? product.seller.email }}</a>
       </div>
     </div>
 
@@ -52,12 +67,16 @@
 
     <!-- ACTIONS -->
     <div class="product-actions-show">
-      <button class="btn-cart">
-        <svg width="18" height="18" viewBox="0 0 43 43" fill="none">
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M16.125 14.333C16.125 12.908 16.691 11.541 17.699 10.533C18.707 9.525 20.074 8.958 21.5 8.958C22.926 8.958 24.293 9.525 25.301 10.533C26.309 11.541 26.875 12.908 26.875 14.333H16.125ZM12.542 14.333C12.542 11.957 13.486 9.679 15.166 7.999C16.846 6.319 19.124 5.375 21.5 5.375C23.876 5.375 26.155 6.319 27.835 7.999C29.515 9.679 30.458 11.957 30.458 14.333H35.833C36.082 14.333 36.328 14.385 36.556 14.486C36.784 14.586 36.988 14.733 37.156 14.916C37.324 15.1 37.452 15.317 37.531 15.553C37.611 15.789 37.64 16.038 37.618 16.286L36.122 32.737C36 34.073 35.384 35.315 34.394 36.219C33.404 37.123 32.111 37.625 30.77 37.625H12.23C10.889 37.625 9.596 37.123 8.606 36.219C7.616 35.315 7 34.073 6.878 32.737L5.382 16.286C5.36 16.038 5.389 15.789 5.469 15.553C5.548 15.317 5.676 15.1 5.844 14.916C6.012 14.733 6.216 14.586 6.444 14.486C6.672 14.385 6.918 14.333 7.167 14.333H12.542Z" fill="white"/>
-        </svg>
-        Ajouter au panier
-      </button>
+      {% if app.user %}
+        <a href="{{ path('app_cart_add', {id: product.id}) }}" class="btn-cart">
+          <svg width="18" height="18" viewBox="0 0 43 43" fill="none">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M16.125 14.333C16.125 12.908 16.691 11.541 17.699 10.533C18.707 9.525 20.074 8.958 21.5 8.958C22.926 8.958 24.293 9.525 25.301 10.533C26.309 11.541 26.875 12.908 26.875 14.333H16.125ZM12.542 14.333C12.542 11.957 13.486 9.679 15.166 7.999C16.846 6.319 19.124 5.375 21.5 5.375C23.876 5.375 26.155 6.319 27.835 7.999C29.515 9.679 30.458 11.957 30.458 14.333H35.833C36.082 14.333 36.328 14.385 36.556 14.486C36.784 14.586 36.988 14.733 37.156 14.916C37.324 15.1 37.452 15.317 37.531 15.553C37.611 15.789 37.64 16.038 37.618 16.286L36.122 32.737C36 34.073 35.384 35.315 34.394 36.219C33.404 37.123 32.111 37.625 30.77 37.625H12.23C10.889 37.625 9.596 37.123 8.606 36.219C7.616 35.315 7 34.073 6.878 32.737L5.382 16.286C5.36 16.038 5.389 15.789 5.469 15.553C5.548 15.317 5.676 15.1 5.844 14.916C6.012 14.733 6.216 14.586 6.444 14.486C6.672 14.385 6.918 14.333 7.167 14.333H12.542Z" fill="white"/>
+          </svg>
+          Ajouter au panier
+        </a>
+      {% else %}
+        <a href="{{ path('app_login') }}" class="btn-cart">Connectez-vous pour acheter</a>
+      {% endif %}
 
       {% if app.user %}
         <a href="{{ path('app_favorite_toggle', {id: product.id}) }}" class="btn-favorite {{ app.user.isFavorite(product) ? 'is-favorite' : '' }}">
@@ -67,12 +86,179 @@
           {{ app.user.isFavorite(product) ? 'Retirer des favoris' : 'Ajouter aux favoris' }}
         </a>
       {% endif %}
-
-      <a href="{{ path('app_shop') }}" class="btn-back">← Retour</a>
+      {% if app.user and app.user != product.seller %}
+          <a href="{{ path('app_contact_seller', {id: product.id}) }}" class="btn-favorite">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+              </svg>
+              Contacter le vendeur
+          </a>
+      {% endif %}
+      <a href="{{ path('app_shop') }}" class="btn-back">← Retour à la boutique</a>
     </div>
 
   </div>
 
 </div>
+
+{# ========== SECTION AVIS — À ACTIVER PLUS TARD ==========
+<div class="reviews-section">
+  <h2 class="reviews-title">
+    Avis
+    {% if reviews|length > 0 %}
+      <span class="reviews-count">({{ reviews|length }})</span>
+    {% endif %}
+  </h2>
+
+  {% for message in app.flashes('success') %}
+    <div class="flash-success">{{ message }}</div>
+  {% endfor %}
+
+  {% if reviewError %}
+    <div class="review-error">{{ reviewError }}</div>
+  {% endif %}
+
+  {% if app.user and app.user != product.seller and not userHasReviewed %}
+    <div class="review-form-wrapper">
+      <h3>Laisser un avis</h3>
+      <form method="post" action="{{ path('app_product_show', {id: product.id}) }}" class="review-form">
+        <input type="hidden" name="_token" value="{{ csrf_token('review' ~ product.id) }}">
+
+        <div class="rating-input">
+          <label>Votre note</label>
+          <div class="star-selector" id="starSelector">
+            {% for i in 1..5 %}
+              <label class="star-label">
+                <input type="radio" name="rating" value="{{ i }}" required {% if i == 5 %}checked{% endif %}>
+                <svg width="28" height="28" viewBox="0 0 24 24" class="star-icon" data-value="{{ i }}">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="comment-input">
+          <label for="comment">Votre commentaire (optionnel)</label>
+          <textarea name="comment" id="comment" rows="3" placeholder="Partagez votre expérience avec ce produit..."></textarea>
+        </div>
+
+        <button type="submit" class="btn">Publier l'avis</button>
+      </form>
+    </div>
+  {% elseif not app.user %}
+    <p class="review-login-hint">
+      <a href="{{ path('app_login') }}">Connectez-vous</a> pour laisser un avis.
+    </p>
+  {% elseif userHasReviewed %}
+    <p class="review-login-hint">Vous avez déjà laissé un avis sur ce produit.</p>
+  {% endif %}
+
+  {% if reviews|length > 0 %}
+    <div class="reviews-list">
+      {% for review in reviews %}
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-author">
+              <div class="review-avatar">
+                {{ (review.user.username ?? review.user.email)|slice(0, 1)|upper }}
+              </div>
+              <div>
+                <span class="review-username">{{ review.user.username ?? 'Utilisateur' }}</span>
+                <span class="review-date">{{ review.createdAt|date('d/m/Y') }}</span>
+              </div>
+            </div>
+            <div class="review-stars">
+              {% for i in 1..5 %}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="{{ i <= review.rating ? '#E8B931' : 'none' }}" stroke="#E8B931" stroke-width="1.5">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              {% endfor %}
+            </div>
+          </div>
+          {% if review.comment %}
+            <p class="review-comment">{{ review.comment }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="reviews-empty">Aucun avis pour le moment. Soyez le premier à donner votre avis !</p>
+  {% endif %}
+</div>
+========== FIN SECTION AVIS #}
+
+{# ========== PRODUITS SIMILAIRES — À ACTIVER PLUS TARD ==========
+{% if similarProducts|length > 0 %}
+<div class="similar-section">
+  <h2 class="similar-title">Vous aimerez aussi</h2>
+  <div class="similar-grid">
+    {% for similar in similarProducts %}
+      <a href="{{ path('app_product_show', {id: similar.id}) }}" class="similar-card">
+        {% if similar.image %}
+          <img src="{{ asset('images/products/' ~ similar.image) }}" alt="{{ similar.name }}">
+        {% else %}
+          <div class="similar-no-image">Pas d'image</div>
+        {% endif %}
+        <div class="similar-card-body">
+          <h3>{{ similar.name }}</h3>
+          <span class="similar-price">{{ similar.price }} €</span>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+========== FIN PRODUITS SIMILAIRES #}
+
+<script>
+  // Interactive star selector
+  document.addEventListener('DOMContentLoaded', function() {
+    const starLabels = document.querySelectorAll('.star-label');
+    const starIcons = document.querySelectorAll('.star-icon');
+
+    function updateStars(selectedValue) {
+      starIcons.forEach(function(icon) {
+        const value = parseInt(icon.getAttribute('data-value'));
+        if (value <= selectedValue) {
+          icon.style.fill = '#E8B931';
+          icon.style.stroke = '#E8B931';
+        } else {
+          icon.style.fill = 'none';
+          icon.style.stroke = '#ccc';
+        }
+      });
+    }
+
+    starLabels.forEach(function(label) {
+      const input = label.querySelector('input');
+      const icon = label.querySelector('.star-icon');
+
+      label.addEventListener('mouseenter', function() {
+        updateStars(parseInt(icon.getAttribute('data-value')));
+      });
+
+      label.addEventListener('click', function() {
+        input.checked = true;
+        updateStars(parseInt(icon.getAttribute('data-value')));
+      });
+    });
+
+    const selector = document.getElementById('starSelector');
+    if (selector) {
+      selector.addEventListener('mouseleave', function() {
+        const checked = document.querySelector('.star-label input:checked');
+        if (checked) {
+          updateStars(parseInt(checked.value));
+        } else {
+          updateStars(0);
+        }
+      });
+
+      // Init: highlight 5 stars by default
+      updateStars(5);
+    }
+  });
+</script>
 
 {% endblock %}

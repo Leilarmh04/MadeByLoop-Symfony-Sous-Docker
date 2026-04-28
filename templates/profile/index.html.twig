@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon profil{% endblock %}
+{% block title %}{{ user.username ?? 'Profil' }}{% endblock %}
 
 {% block stylesheets %}
   {{ parent() }}
@@ -14,7 +14,27 @@
   <!-- HEADER PROFIL -->
   <div class="profile-header">
     <div class="profile-avatar">
-      <img src="{{ asset('images/default-avatar.png') }}" alt="Photo de profil">
+      {% if user.profilePicture %}
+        <img src="{{ asset('images/profiles/' ~ user.profilePicture) }}" alt="{{ user.username }}">
+      {% else %}
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="40" r="40" fill="#C0C0C0"/>
+          <circle cx="40" cy="30" r="13" fill="#A0A0A0"/>
+          <ellipse cx="40" cy="62" rx="22" ry="16" fill="#A0A0A0"/>
+        </svg>
+      {% endif %}
+
+      {# Bouton "+" pour uploader — seulement sur son propre profil #}
+      {% if app.user == user %}
+        <form action="{{ path('app_profile_upload_photo') }}" method="post" enctype="multipart/form-data" class="avatar-upload-form">
+          <label class="avatar-upload-btn" title="Changer la photo">
+            <input type="file" name="profile_photo" accept="image/*" onchange="this.form.submit()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white" stroke="none">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+          </label>
+        </form>
+      {% endif %}
     </div>
 
     <div class="profile-info">
@@ -22,24 +42,35 @@
 
       <div class="profile-stats">
         <span><strong>{{ user.products|length }}</strong> publications</span>
-        <span><strong>0</strong> followers</span>
-        <span><strong>0</strong> suivis</span>
+        <span><strong>{{ user.followers|length }}</strong> abonné{{ user.followers|length > 1 ? 's' : '' }}</span>
+        <span><strong>{{ user.following|length }}</strong> suivis</span>
       </div>
 
-      <p class="profile-bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-
-      <div class="profile-socials">
-        <span>@Twitter</span>
-        <span>@Instagram</span>
-      </div>
+      {% set bioText = user.bio ?? 'Aucune bio pour le moment.' %}
+      {% if bioText|length > 100 %}
+          <p class="profile-bio">
+              <span class="bio-short">{{ bioText|slice(0, 100) }}...</span>
+              <span class="bio-full" style="display:none;">{{ bioText }}</span>
+              <a href="#" class="bio-toggle" onclick="event.preventDefault(); this.parentElement.querySelector('.bio-short').style.display = this.parentElement.querySelector('.bio-short').style.display === 'none' ? 'inline' : 'none'; this.parentElement.querySelector('.bio-full').style.display = this.parentElement.querySelector('.bio-full').style.display === 'none' ? 'inline' : 'none'; this.textContent = this.textContent === 'plus...' ? 'moins' : 'plus...';">plus...</a>
+          </p>
+      {% else %}
+          <p class="profile-bio">{{ bioText }}</p>
+      {% endif %}
 
       <div class="profile-actions">
         {% if app.user == user %}
           <a href="{{ path('app_profile_edit') }}" class="btn-follow">Modifier le profil</a>
           <a href="{{ path('app_my_products') }}" class="btn-message">Mes produits</a>
         {% else %}
-          <button class="btn-follow">Suivre</button>
-          <button class="btn-message">Message</button>
+          {% if app.user %}
+            <a href="{{ path('app_follow_toggle', {id: user.id}) }}" class="btn-follow {{ app.user.isFollowing(user) ? 'btn-following' : '' }}">
+              {{ app.user.isFollowing(user) ? 'Abonné' : 'Suivre' }}
+            </a>
+          {% else %}
+            <a href="{{ path('app_login') }}" class="btn-follow">Suivre</a>
+          {% endif %}
+          <a href="{{ path('app_contact_user', {id: user.id}) }}" class="btn-message">Message</a>
+          <a href="{{ path('app_user_boutique', {id: user.id}) }}" class="btn-message">Boutique</a>
         {% endif %}
       </div>
     </div>
@@ -47,19 +78,13 @@
 
   <!-- ONGLETS -->
   <div class="profile-tabs">
-    <button class="tab active">
+    <button class="tab active" data-tab="publications">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
         <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
         <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
       </svg>
     </button>
-    <button class="tab">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
-        <rect x="9" y="3" width="6" height="4" rx="1"/>
-      </svg>
-    </button>
-    <button class="tab">
+    <button class="tab" data-tab="favoris">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
         <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
       </svg>
@@ -68,31 +93,76 @@
 
   <hr class="profile-divider">
 
-  <!-- CONTENU -->
-  {% if user.sellerRole in ['seller', 'both'] and user.products|length > 0 %}
-    <div class="profile-grid">
-      {% for product in user.products %}
-        <div class="product-card">
+  <!-- CONTENU PUBLICATIONS -->
+  <div class="tab-content active" id="tab-publications">
+    {% if user.sellerRole in ['seller', 'both'] and user.products|length > 0 %}
+      <div class="profile-grid">
+        {% for product in user.products %}
+          <div class="product-card">
             <a href="{{ path('app_product_show', {id: product.id}) }}">
+              {% if product.image %}
                 <img src="{{ asset('images/products/' ~ product.image) }}" alt="{{ product.name }}">
+              {% else %}
+                <div class="profile-no-image">Pas d'image</div>
+              {% endif %}
             </a>
-        </div>
-      {% endfor %}
-    </div>
-  {% else %}
-    <div class="profile-empty">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1">
-        <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
-        <circle cx="12" cy="13" r="4"/>
-      </svg>
-      <h2>partagez vos première création</h2>
-      <p>Lorsque vous partagez vos créations, elles apparaissent sur votre profil.</p>
-      {% if user.sellerRole in ['seller', 'both'] %}
-        <a href="{{ path('app_product_new') }}" class="btn-share">partager mes créations</a>
-      {% endif %}
-    </div>
-  {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="profile-empty">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1">
+          <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+        <h2>Partagez vos premières créations</h2>
+        <p>Lorsque vous partagez vos créations, elles apparaissent sur votre profil.</p>
+        {% if app.user == user and user.sellerRole in ['seller', 'both'] %}
+          <a href="{{ path('app_product_new') }}" class="btn-share">Partager mes créations</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- CONTENU FAVORIS -->
+  <div class="tab-content" id="tab-favoris">
+    {% if user.favorites|length > 0 %}
+      <div class="profile-grid">
+        {% for product in user.favorites %}
+          <div class="product-card">
+            <a href="{{ path('app_product_show', {id: product.id}) }}">
+              {% if product.image %}
+                <img src="{{ asset('images/products/' ~ product.image) }}" alt="{{ product.name }}">
+              {% else %}
+                <div class="profile-no-image">Pas d'image</div>
+              {% endif %}
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="profile-empty">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1">
+          <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+        </svg>
+        <h2>Pas encore de favoris</h2>
+        <p>Les articles que vous aimez apparaissent ici.</p>
+        <a href="{{ path('app_shop') }}" class="btn-share">Découvrir la boutique</a>
+      </div>
+    {% endif %}
+  </div>
 
 </div>
+
+<script>
+document.querySelectorAll('.profile-tabs .tab').forEach(tab => {
+    tab.addEventListener('click', function () {
+        document.querySelectorAll('.profile-tabs .tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+    });
+});
+</script>
 
 {% endblock %}

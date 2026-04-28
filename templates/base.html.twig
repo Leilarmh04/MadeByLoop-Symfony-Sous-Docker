@@ -3,58 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}MadeByLoop{% endblock %}</title>
-
-    {# Ton fichier CSS global #}
     <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
-
     {% block stylesheets %}{% endblock %}
 
+    {# Dark mode : appliquer avant le rendu pour éviter le flash #}
+    <script>
+        if (localStorage.getItem('mbl-darkmode') === 'true') {
+            document.documentElement.classList.add('dark-mode');
+        }
+    </script>
 </head>
 
 <body>
 
-    {# ===========================
-       HEADER — zone haute du site
-       =========================== #}
-       
     {% block header %}
-    <header class="header">
-        <div class="header-inner">
-            <nav class="nav">
-                <a href="{{ path('app_login') }}">Se connecter</a>
-                <a href="{{ path('app_register') }}">S'inscrire</a>
-                <a href="{{ path('app_logout') }}">Se déconnecter</a>
-            </nav>
+    <header class="site-header">
+        <div class="header-top">
+            <div class="header-left">
+                <a href="{{ path('app_search') }}" class="header-icon" title="Rechercher">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                </a>
+            </div>
+
+            <a href="{{ path('app_accueil') }}" class="header-logo">
+                <img src="{{ asset('images/logo-MBL.png') }}" alt="MadeByLoop" class="logo-img">
+            </a>
+
+            <div class="header-right">
+                {% if app.user %}
+                    <a href="{{ path('app_cart') }}" class="header-icon" title="Panier">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                            <line x1="3" y1="6" x2="21" y2="6"/>
+                            <path d="M16 10a4 4 0 01-8 0"/>
+                        </svg>
+                    </a>
+                    <a href="{{ path('app_profile') }}" class="header-icon" title="Profil">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </a>
+                    <a href="{{ path('app_settings') }}" class="header-icon" title="Paramètres">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+                        </svg>
+                    </a>
+                {% else %}
+                    <a href="{{ path('app_login') }}" class="header-icon header-link-text">Se connecter</a>
+                    <a href="{{ path('app_register') }}" class="header-icon header-link-text">S'inscrire</a>
+                {% endif %}
+            </div>
         </div>
+
+        <nav class="header-nav">
+            <a href="{{ path('app_shop') }}" class="header-nav-link">Boutique</a>
+            <a href="#" class="header-nav-link">Catalogues</a>
+            <a href="#" class="header-nav-link">Contacts</a>
+            {% if app.user %}
+                <a href="{{ path('app_my_favorites') }}" class="header-nav-link">Favoris</a>
+                <a href="{{ path('app_messages') }}" class="header-nav-link">Messages</a>
+                <a href="{{ path('app_logout') }}" class="header-nav-link">Déconnexion</a>
+            {% endif %}
+        </nav>
     </header>
     {% endblock %}
 
-
-    {# ===========================
-       BODY — contenu des pages
-       =========================== #}
     <main class="content">
-
-        {# les sections maquette :
-           - bannière (image)
-           - texte d’introduction
-           - catégories
-           - produits
-           - etc.
-        #}
-
         {% block body %}{% endblock %}
     </main>
 
-
-    {# ===========================
-       FOOTER — bas de page
-       =========================== #}
-    <footer class="footer">
-
-       
-
-        <p>© {{ "now"|date("Y") }} MadeByLoop — Tous droits réservés</p>
+    <footer class="site-footer">
+        <p>© {{ "now"|date("Y") }} MadeByLoop</p>
     </footer>
 
 </body>

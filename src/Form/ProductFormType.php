@@ -11,11 +11,45 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 
 class ProductFormType extends AbstractType
 {
+    public const SIZES = [
+        'XS' => 'XS',
+        'S' => 'S',
+        'M' => 'M',
+        'L' => 'L',
+        'XL' => 'XL',
+        'XXL' => 'XXL',
+        'Taille unique' => 'Taille unique',
+    ];
+
+    public const COLORS = [
+        'Noir' => 'Noir',
+        'Blanc' => 'Blanc',
+        'Gris' => 'Gris',
+        'Beige' => 'Beige',
+        'Crème' => 'Crème',
+        'Nude' => 'Nude',
+        'Marron' => 'Marron',
+        'Rose' => 'Rose',
+        'Rouge' => 'Rouge',
+        'Bordeaux' => 'Bordeaux',
+        'Orange' => 'Orange',
+        'Corail' => 'Corail',
+        'Jaune' => 'Jaune',
+        'Doré' => 'Doré',
+        'Vert' => 'Vert',
+        'Kaki' => 'Kaki',
+        'Bleu' => 'Bleu',
+        'Turquoise' => 'Turquoise',
+        'Violet' => 'Violet',
+        'Argenté' => 'Argenté',
+    ];
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -34,6 +68,20 @@ class ProductFormType extends AbstractType
                 'choice_label' => 'name',
                 'label' => 'Catégorie',
                 'placeholder' => 'Choisir une catégorie',
+            ])
+            ->add('sizes', ChoiceType::class, [
+                'label' => 'Tailles disponibles',
+                'choices' => self::SIZES,
+                'multiple' => true,
+                'expanded' => true,
+                'required' => false,
+            ])
+            ->add('colors', ChoiceType::class, [
+                'label' => 'Couleurs disponibles',
+                'choices' => self::COLORS,
+                'multiple' => true,
+                'expanded' => true,
+                'required' => false,
             ])
             ->add('imageFile', FileType::class, [
                 'label'    => 'Image du produit',

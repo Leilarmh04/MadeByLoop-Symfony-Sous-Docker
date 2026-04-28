@@ -5,9 +5,12 @@ namespace App\Form;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class ProfileFormType extends AbstractType
 {
@@ -19,6 +22,23 @@ class ProfileFormType extends AbstractType
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Adresse email',
+            ])
+            ->add('bio', TextareaType::class, [
+                'label' => 'Bio',
+                'required' => false,
+                'attr' => ['placeholder' => 'Parlez de vous...', 'rows' => 3],
+            ])
+            ->add('profilePictureFile', FileType::class, [
+                'label' => 'Photo de profil',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '2M',
+                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/webp'],
+                        'mimeTypesMessage' => 'Formats acceptés : JPG, PNG, WEBP',
+                    ])
+                ],
             ]);
     }
 

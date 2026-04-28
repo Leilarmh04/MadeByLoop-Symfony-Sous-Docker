@@ -126,7 +126,23 @@ class Conversation
 
         return $this;
     }
+    public function getOtherUser(User $currentUser): ?User
+    {
+        if ($this->buyer === $currentUser) {
+            return $this->seller;
+        }
+        return $this->buyer;
+    }
 
+    public function getLastMessage(): ?Message
+    {
+        if ($this->messages->isEmpty()) {
+            return null;
+        }
+        $messages = $this->messages->toArray();
+        usort($messages, fn($a, $b) => $b->getSentAt() <=> $a->getSentAt());
+        return $messages[0];
+    }
     public function removeMessage(Message $message): static
     {
         if ($this->messages->removeElement($message)) {

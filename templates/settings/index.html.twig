@@ -1,0 +1,135 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paramètres{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/settings.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<div class="settings-page">
+    <h1>Paramètres</h1>
+
+    {# ===== APPARENCE ===== #}
+    <div class="settings-section">
+        <h2>Apparence</h2>
+        <div class="setting-item">
+            <div class="setting-info">
+                <span class="setting-label">Mode sombre</span>
+                <span class="setting-desc">Changer l'apparence du site en mode sombre</span>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" id="toggle-darkmode">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+    </div>
+
+    {# ===== NOTIFICATIONS ===== #}
+    <div class="settings-section">
+        <h2>Notifications</h2>
+        <div class="setting-item">
+            <div class="setting-info">
+                <span class="setting-label">Notifications par email</span>
+                <span class="setting-desc">Recevoir des emails pour les messages et commandes</span>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" id="toggle-email-notif">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+        <div class="setting-item">
+            <div class="setting-info">
+                <span class="setting-label">Notifications push</span>
+                <span class="setting-desc">Recevoir des notifications en temps réel</span>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" id="toggle-push-notif">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+    </div>
+
+    {# ===== LANGUE ===== #}
+    <div class="settings-section">
+        <h2>Langue</h2>
+        <div class="setting-item">
+            <div class="setting-info">
+                <span class="setting-label">Langue de l'interface</span>
+                <span class="setting-desc">Choisir la langue d'affichage du site</span>
+            </div>
+            <select class="setting-select" id="select-lang">
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="ar">العربية</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="settings-saved" id="settings-saved" style="display:none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#155724" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Préférence enregistrée
+    </div>
+
+    <a href="{{ path('app_profile') }}" class="settings-back">← Retour au profil</a>
+</div>
+
+<script>
+(function() {
+    // ===== DARK MODE =====
+    const darkToggle = document.getElementById('toggle-darkmode');
+    const isDark = localStorage.getItem('mbl-darkmode') === 'true';
+    darkToggle.checked = isDark;
+    if (isDark) document.body.classList.add('dark-mode');
+
+    darkToggle.addEventListener('change', function() {
+        if (this.checked) {
+            document.body.classList.add('dark-mode');
+            localStorage.setItem('mbl-darkmode', 'true');
+        } else {
+            document.body.classList.remove('dark-mode');
+            localStorage.setItem('mbl-darkmode', 'false');
+        }
+        showSaved();
+    });
+
+    // ===== NOTIFICATIONS EMAIL =====
+    const emailNotif = document.getElementById('toggle-email-notif');
+    emailNotif.checked = localStorage.getItem('mbl-email-notif') !== 'false';
+    emailNotif.addEventListener('change', function() {
+        localStorage.setItem('mbl-email-notif', this.checked ? 'true' : 'false');
+        showSaved();
+    });
+
+    // ===== NOTIFICATIONS PUSH =====
+    const pushNotif = document.getElementById('toggle-push-notif');
+    pushNotif.checked = localStorage.getItem('mbl-push-notif') === 'true';
+    pushNotif.addEventListener('change', function() {
+        localStorage.setItem('mbl-push-notif', this.checked ? 'true' : 'false');
+        showSaved();
+    });
+
+    // ===== LANGUE =====
+    const langSelect = document.getElementById('select-lang');
+    const savedLang = localStorage.getItem('mbl-lang') || 'fr';
+    langSelect.value = savedLang;
+    langSelect.addEventListener('change', function() {
+        localStorage.setItem('mbl-lang', this.value);
+        showSaved();
+    });
+
+    // ===== FEEDBACK =====
+    function showSaved() {
+        const el = document.getElementById('settings-saved');
+        el.style.display = 'flex';
+        setTimeout(function() { el.style.display = 'none'; }, 2000);
+    }
+})();
+</script>
+
+{% endblock %}

@@ -5,6 +5,13 @@
   padding: 0;
 }
 
+.header-link-text {
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
 body {
   font-family: 'Georgia', serif;
   background: #f5f0e8;

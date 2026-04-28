@@ -39,6 +39,12 @@ class Product
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
 
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $sizes = [];
+
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $colors = [];
+
     /**
      * @var Collection<int, Conversation>
      */
@@ -70,7 +76,6 @@ class Product
     public function setName(string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -82,7 +87,6 @@ class Product
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -94,7 +98,6 @@ class Product
     public function setPrice(float $price): static
     {
         $this->price = $price;
-
         return $this;
     }
 
@@ -106,7 +109,6 @@ class Product
     public function setImage(?string $image): static
     {
         $this->image = $image;
-
         return $this;
     }
 
@@ -118,7 +120,6 @@ class Product
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 
@@ -130,7 +131,6 @@ class Product
     public function setSeller(?User $seller): static
     {
         $this->seller = $seller;
-
         return $this;
     }
 
@@ -142,7 +142,28 @@ class Product
     public function setCategory(?Category $category): static
     {
         $this->category = $category;
+        return $this;
+    }
 
+    public function getSizes(): ?array
+    {
+        return $this->sizes;
+    }
+
+    public function setSizes(?array $sizes): static
+    {
+        $this->sizes = $sizes;
+        return $this;
+    }
+
+    public function getColors(): ?array
+    {
+        return $this->colors;
+    }
+
+    public function setColors(?array $colors): static
+    {
+        $this->colors = $colors;
         return $this;
     }
 
@@ -160,7 +181,6 @@ class Product
             $this->conversations->add($conversation);
             $conversation->addProduct($this);
         }
-
         return $this;
     }
 
@@ -169,7 +189,6 @@ class Product
         if ($this->conversations->removeElement($conversation)) {
             $conversation->removeProduct($this);
         }
-
         return $this;
     }
 
@@ -187,19 +206,16 @@ class Product
             $this->reviews->add($review);
             $review->setProduct($this);
         }
-
         return $this;
     }
 
     public function removeReview(Review $review): static
     {
         if ($this->reviews->removeElement($review)) {
-            // set the owning side to null (unless already changed)
             if ($review->getProduct() === $this) {
                 $review->setProduct(null);
             }
         }
-
         return $this;
     }
 }

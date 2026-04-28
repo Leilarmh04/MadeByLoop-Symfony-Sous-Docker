@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Boutique{% endblock %}
+{% block title %}Boutique de @{{ seller.username ?? seller.email }}{% endblock %}
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('styles/shop.css') }}">
@@ -8,13 +8,9 @@
 
 {% block body %}
 
-<div class="shop-hero">
-    {% if app.user %}
-        <h1>Boutique de @{{ app.user.username ?? app.user.email }}</h1>
-    {% else %}
-        <h1>Boutique</h1>
-    {% endif %}
-    <p>Découvre des créations au crochet faites à la main.</p>
+<div class="shop-hero" style="text-align: left;">
+    <h1>Boutique de <a href="{{ path('app_profile_public', {id: seller.id}) }}" class="boutique-seller-link">@{{ seller.username ?? seller.email }}</a></h1>
+    <p>{{ seller.products|length }} produit{{ seller.products|length > 1 ? 's' : '' }}</p>
 </div>
 
 {% if products|length > 0 %}
@@ -30,12 +26,8 @@
                 </a>
 
                 <div class="card-body">
-                    <a href="{{ path('app_profile_public', {id: product.seller.id}) }}" class="card-boutique">
-                        @{{ product.seller.username ?? product.seller.email }}
-                    </a>
                     <a href="{{ path('app_product_show', {id: product.id}) }}" class="card-name">{{ product.name }}</a>
                     <span class="card-price">{{ product.price }} €</span>
-
                     <div class="card-bottom">
                         <span class="card-category">{{ product.category.name }}</span>
                         {% if app.user %}
@@ -54,7 +46,7 @@
     </div>
 {% else %}
     <div class="shop-empty">
-        <p>Aucun produit disponible pour le moment.</p>
+        <p>Aucun produit dans cette boutique pour le moment.</p>
     </div>
 {% endif %}
 

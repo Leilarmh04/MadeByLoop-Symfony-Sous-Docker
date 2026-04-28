@@ -1,0 +1,215 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recherche{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/search.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<div class="search-page">
+
+    {# ===== BARRE DE RECHERCHE ===== #}
+    <div class="search-toolbar">
+        <form method="get" action="{{ path('app_search') }}" class="search-bar">
+            <input type="hidden" name="type" value="{{ type }}">
+            <input type="hidden" name="sort" value="{{ currentSort }}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" class="search-icon">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" name="q" value="{{ query }}" placeholder="Rechercher un produit, une boutique, un utilisateur..." class="search-input">
+            <button type="submit" class="search-submit">Rechercher</button>
+        </form>
+
+        {% if type == 'all' or type == 'products' %}
+        <div class="sort-bar">
+            <span class="sort-label">Trier</span>
+            <form method="get" action="{{ path('app_search') }}" class="sort-form">
+                <input type="hidden" name="q" value="{{ query }}">
+                <input type="hidden" name="type" value="{{ type }}">
+                {% if currentCategory %}<input type="hidden" name="category" value="{{ currentCategory }}">{% endif %}
+                {% if currentPriceMin %}<input type="hidden" name="price_min" value="{{ currentPriceMin }}">{% endif %}
+                {% if currentPriceMax %}<input type="hidden" name="price_max" value="{{ currentPriceMax }}">{% endif %}
+                {% for s in selectedSizes %}<input type="hidden" name="sizes[]" value="{{ s }}">{% endfor %}
+                {% for c in selectedColors %}<input type="hidden" name="colors[]" value="{{ c }}">{% endfor %}
+                <select name="sort" onchange="this.form.submit()" class="sort-select">
+                    <option value="newest" {{ currentSort == 'newest' ? 'selected' : '' }}>Nouveautés</option>
+                    <option value="price_asc" {{ currentSort == 'price_asc' ? 'selected' : '' }}>Prix croissant</option>
+                    <option value="price_desc" {{ currentSort == 'price_desc' ? 'selected' : '' }}>Prix décroissant</option>
+                </select>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    {# ===== TABS ===== #}
+    <div class="search-tabs">
+        <a href="{{ path('app_search', {q: query}) }}" class="search-tab {{ type == 'all' ? 'active' : '' }}">Tout</a>
+        <a href="{{ path('app_search', {q: query, type: 'products'}) }}" class="search-tab {{ type == 'products' ? 'active' : '' }}">Produits</a>
+        <a href="{{ path('app_search', {q: query, type: 'shops'}) }}" class="search-tab {{ type == 'shops' ? 'active' : '' }}">Boutiques</a>
+        <a href="{{ path('app_search', {q: query, type: 'users'}) }}" class="search-tab {{ type == 'users' ? 'active' : '' }}">Utilisateurs</a>
+    </div>
+
+    <div class="search-layout">
+
+        {# ===== SIDEBAR FILTRES ===== #}
+        {% if type == 'all' or type == 'products' %}
+        <aside class="search-filters">
+            <form method="get" action="{{ path('app_search') }}" class="filters-form">
+                <input type="hidden" name="q" value="{{ query }}">
+                <input type="hidden" name="type" value="{{ type }}">
+                <input type="hidden" name="sort" value="{{ currentSort }}">
+
+                <h3 class="filter-title">Filtres</h3>
+
+                <div class="filter-group">
+                    <h4>Catégories</h4>
+                    <label class="filter-checkbox">
+                        <input type="radio" name="category" value="" {{ currentCategory is empty ? 'checked' : '' }}>
+                        <span>Toutes</span>
+                    </label>
+                    {% for category in categories %}
+                        <label class="filter-checkbox">
+                            <input type="radio" name="category" value="{{ category.id }}" {{ currentCategory == category.id ? 'checked' : '' }}>
+                            <span>{{ category.name }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+
+                <div class="filter-group">
+                    <h4>Prix</h4>
+                    <div class="price-range">
+                        <input type="number" name="price_min" placeholder="Min" value="{{ currentPriceMin }}" class="price-input" min="0" step="0.01">
+                        <span class="price-sep">—</span>
+                        <input type="number" name="price_max" placeholder="Max" value="{{ currentPriceMax }}" class="price-input" min="0" step="0.01">
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h4>Tailles</h4>
+                    {% for size in allSizes %}
+                        <label class="filter-checkbox">
+                            <input type="checkbox" name="sizes[]" value="{{ size }}" {{ size in selectedSizes ? 'checked' : '' }}>
+                            <span>{{ size }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+
+                <div class="filter-group">
+                    <h4>Couleurs</h4>
+                    {% for color in allColors %}
+                        <label class="filter-checkbox color-option {{ loop.index > 5 ? 'color-hidden' : '' }}">
+                            <input type="checkbox" name="colors[]" value="{{ color }}" {{ color in selectedColors ? 'checked' : '' }}>
+                            <span>{{ color }}</span>
+                        </label>
+                    {% endfor %}
+                    {% if allColors|length > 5 %}
+                        <button type="button" class="color-toggle" onclick="toggleColors()">+ Voir plus</button>
+                    {% endif %}
+                </div>
+
+                <div class="filter-actions">
+                    <button type="submit" class="filter-btn">Appliquer</button>
+                    <a href="{{ path('app_search', {q: query, type: type}) }}" class="filter-reset">Réinitialiser</a>
+                </div>
+            </form>
+        </aside>
+        {% endif %}
+
+        {# ===== RÉSULTATS ===== #}
+        <div class="search-results">
+
+            {% if query == '' and type == 'all' %}
+                <div class="search-empty">
+                    <p>Tapez votre recherche ci-dessus pour trouver des produits, boutiques ou utilisateurs.</p>
+                </div>
+            {% else %}
+
+                {% if (type == 'all' or type == 'shops') and shops|length > 0 %}
+                    <div class="search-section">
+                        <h2>Boutiques</h2>
+                        <div class="shops-list">
+                            {% for shop in shops %}
+                                <a href="{{ path('app_profile_public', {id: shop.id}) }}" class="shop-card">
+                                    <div class="shop-avatar">{{ (shop.username ?? shop.email)|slice(0, 1)|upper }}</div>
+                                    <div class="shop-info">
+                                        <span class="shop-name">Boutique de @{{ shop.username ?? shop.email }}</span>
+                                        <span class="shop-count">{{ shop.products|length }} produit{{ shop.products|length > 1 ? 's' : '' }}</span>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if (type == 'all' or type == 'users') and users|length > 0 %}
+                    <div class="search-section">
+                        <h2>Utilisateurs</h2>
+                        <div class="users-list">
+                            {% for user in users %}
+                                <a href="{{ path('app_profile_public', {id: user.id}) }}" class="user-card">
+                                    <div class="user-avatar">{{ (user.username ?? user.email)|slice(0, 1)|upper }}</div>
+                                    <div class="user-info">
+                                        <span class="user-name">@{{ user.username ?? user.email }}</span>
+                                        <span class="user-products">{{ user.products|length }} produit{{ user.products|length > 1 ? 's' : '' }}</span>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if (type == 'all' or type == 'products') and products|length > 0 %}
+                    <div class="search-section">
+                        <h2>Produits <span class="result-count">({{ products|length }})</span></h2>
+                        <div class="products-grid">
+                            {% for product in products %}
+                                <a href="{{ path('app_product_show', {id: product.id}) }}" class="product-card">
+                                    <div class="card-image">
+                                        {% if product.image %}
+                                            <img src="{{ asset('images/products/' ~ product.image) }}" alt="{{ product.name }}">
+                                        {% else %}
+                                            <div class="card-no-image">Pas d'image</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="card-body">
+                                        <h3 class="card-name">{{ product.name }}</h3>
+                                        <span class="card-seller">par @{{ product.seller.username ?? product.seller.email }}</span>
+                                        <div class="card-footer">
+                                            <span class="card-price">{{ product.price }} €</span>
+                                            <span class="card-category">{{ product.category.name }}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if products|length == 0 and users|length == 0 and shops|length == 0 %}
+                    <div class="search-empty">
+                        <p>Aucun résultat pour "{{ query }}".</p>
+                    </div>
+                {% endif %}
+
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+<script>
+function toggleColors() {
+    const hiddenColors = document.querySelectorAll('.color-hidden');
+    const btn = document.querySelector('.color-toggle');
+    const isHidden = hiddenColors[0] && hiddenColors[0].style.display !== 'flex';
+    hiddenColors.forEach(function(el) {
+        el.style.display = isHidden ? 'flex' : 'none';
+    });
+    btn.textContent = isHidden ? '- Voir moins' : '+ Voir plus';
+}
+</script>
+
+{% endblock %}

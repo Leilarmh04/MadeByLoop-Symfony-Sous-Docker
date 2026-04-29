@@ -1,4 +1,4 @@
-/* ========== PAGE CHECKOUT ==========
+/* ========== PAGE CHECKOUT ========== */
 .checkout-page {
     display: grid;
     grid-template-columns: 1fr 360px;
@@ -9,7 +9,7 @@
     align-items: start;
 }
 
-========== FORMULAIRE ==========
+/* ========== FORMULAIRE ========== */
 .checkout-form-section {
     background: white;
     border-radius: 12px;
@@ -86,7 +86,7 @@
     color: #ccc;
 }
 
-Méthodes de paiement
+/* Méthodes de paiement */
 .payment-section {
     margin-top: 8px;
     padding-top: 16px;
@@ -123,7 +123,7 @@ Méthodes de paiement
     accent-color: #B3A582;
 }
 
-Actions
+/* Actions */
 .checkout-actions {
     display: flex;
     gap: 12px;
@@ -165,7 +165,7 @@ Actions
     background: #9c8f6e;
 }
 
-========== RÉSUMÉ PANIER ==========
+/* ========== RÉSUMÉ PANIER ========== */
 .checkout-summary {
     background: #faf7f2;
     border-radius: 12px;
@@ -190,7 +190,7 @@ Actions
     color: #aaa;
 }
 
-Articles
+/* Articles */
 .summary-items {
     display: flex;
     flex-direction: column;
@@ -259,7 +259,7 @@ Articles
     white-space: nowrap;
 }
 
-Totaux
+/* Totaux */
 .summary-totals {
     display: flex;
     flex-direction: column;
@@ -289,39 +289,7 @@ Totaux
     color: #B3A582;
 }
 
-Code promo
-.promo-input {
-    display: flex;
-    gap: 8px;
-    margin-top: 4px;
-}
-
-.promo-input .form-input {
-    flex: 1;
-    font-size: 12px;
-    padding: 8px 10px;
-}
-
-.promo-btn {
-    padding: 8px 14px;
-    background: white;
-    border: 1px solid #B3A582;
-    border-radius: 8px;
-    color: #B3A582;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: 'Georgia', serif;
-    transition: all 0.3s;
-    white-space: nowrap;
-}
-
-.promo-btn:hover {
-    background: #B3A582;
-    color: white;
-}
-
-========== RESPONSIVE ==========
+/* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
     .checkout-page {
         grid-template-columns: 1fr;
@@ -339,4 +307,3 @@ Code promo
         flex-direction: column;
     }
 }
-*/

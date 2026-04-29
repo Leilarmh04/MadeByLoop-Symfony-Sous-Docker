@@ -1,4 +1,4 @@
-.settings-page {
+/* .settings-page {
     max-width: 600px;
     margin: 0 auto;
     font-family: 'Georgia', serif;
@@ -57,7 +57,7 @@
     color: #999;
 }
 
-/* Toggle switch */
+
 .toggle {
     position: relative;
     display: inline-block;
@@ -92,7 +92,7 @@
 .toggle input:checked + .toggle-slider { background: #B3A582; }
 .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
 
-/* Select */
+
 .setting-select {
     padding: 8px 12px;
     border: 1px solid #ddd;
@@ -106,7 +106,7 @@
 
 .setting-select:focus { border-color: #B3A582; }
 
-/* Feedback saved */
+
 .settings-saved {
     display: flex;
     align-items: center;
@@ -120,7 +120,7 @@
     border: 1px solid #c3e6cb;
 }
 
-/* Retour */
+
 .settings-back {
     display: inline-block;
     margin-top: 16px;
@@ -136,4 +136,4 @@
         flex-wrap: wrap;
         gap: 10px;
     }
-}
+} */

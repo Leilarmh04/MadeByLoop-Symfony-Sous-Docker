@@ -3,6 +3,7 @@
 {% block title %}Paiement{% endblock %}
 
 {% block stylesheets %}
+    {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/checkout.css') }}">
 {% endblock %}
 
@@ -16,7 +17,6 @@
 
         <form method="post" action="{{ path('app_checkout') }}" class="checkout-form">
 
-            {# Nom / Prénom #}
             <div class="form-row">
                 <div class="form-group">
                     <label for="lastname">Nom</label>
@@ -28,13 +28,11 @@
                 </div>
             </div>
 
-            {# Email #}
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" placeholder="ex.gérard@gmail.com" value="{{ app.user.email }}" class="form-input">
             </div>
 
-            {# Adresse de livraison #}
             <div class="form-group">
                 <div class="label-row">
                     <label for="address">Adresse de livraison</label>
@@ -43,7 +41,6 @@
                 <input type="text" id="address" name="address" placeholder="10 rue..." class="form-input">
             </div>
 
-            {# Ville / Code postal #}
             <div class="form-row">
                 <div class="form-group">
                     <label for="city">Ville</label>
@@ -55,7 +52,6 @@
                 </div>
             </div>
 
-            {# Pays #}
             <div class="form-group">
                 <label for="country">Pays</label>
                 <select id="country" name="country" class="form-input">
@@ -106,7 +102,6 @@
             </div>
             ========== FIN MOYEN DE PAIEMENT #}
 
-            {# Boutons #}
             <div class="checkout-actions">
                 <a href="{{ path('app_cart') }}" class="checkout-back">Retour au panier</a>
 
@@ -150,17 +145,6 @@
                 <span>Livraison</span>
                 <span>{{ shipping|number_format(2, ',', ' ') }} €</span>
             </div>
-
-            {# ===== CODE PROMO — COMMENTÉ POUR PLUS TARD =====
-            <div class="summary-line">
-                <span>Code promo</span>
-                <span>—</span>
-            </div>
-            <div class="promo-input">
-                <input type="text" name="promo_code" placeholder="Code promo" class="form-input">
-                <button type="button" class="promo-btn">Appliquer</button>
-            </div>
-            ========== FIN CODE PROMO #}
 
             <div class="summary-total-line">
                 <span>Total</span>

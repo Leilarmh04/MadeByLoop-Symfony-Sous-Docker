@@ -2,6 +2,10 @@
 
 {% block title %}Ajouter un produit{% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/new-product.css') }}">
+{% endblock %}
+
 {% block body %}
 
 <h1>Ajouter un produit</h1>
@@ -15,4 +19,4 @@
     <button type="submit">Publier le produit</button>
 {{ form_end(productForm) }}
 
-{% endblock %}  
+{% endblock %}

@@ -23,7 +23,7 @@ class BoutiqueController extends AbstractController
     #[Route('/boutique/{id}', name: 'app_user_boutique', requirements: ['id' => '\d+'])]
     public function userBoutique(User $user): Response
     {
-        return $this->render('shop/user_boutique.html.twig', [
+        return $this->render('user/boutique.html.twig', [
             'seller' => $user,
             'products' => $user->getProducts(),
         ]);

@@ -53,7 +53,7 @@
   <nav class="hero-nav">
     <a href="{{ path('app_shop') }}" class="hero-nav-link">Boutique</a>
     <a href="#" class="hero-nav-link">Catalogues</a>
-    <a href="#" class="hero-nav-link">Contacts</a>
+    <a href="{{ path('app_contact') }}" class="header-nav-link">Contacts</a>
   </nav>
 
   <img class="hero-banner" src="{{ asset('images/image-header-MBL.png') }}" alt="Bannière MadeByLoop">
@@ -77,8 +77,10 @@
             <img src="{{ asset('images/Category/deco-crochet-site.png') }}" alt="{{ category.name }}">
           {% elseif 'ébé' in category.name %}
             <img src="{{ asset('images/Category/bebe&enfants-crochet-site.png') }}" alt="{{ category.name }}">
+          {% elseif 'ode' in category.name %}
+            <img src="{{ asset('images/Category/mode&vetements-crochet-site.png') }}" alt="{{ category.name }}">
           {% else %}
-            <img src="{{ asset('images/Category/accessoire-crochet-site.png') }}" alt="{{ category.name }}">
+            <img src="{{ asset('images/Category/cadeau-crochet-site.png') }}" alt="{{ category.name }}">
           {% endif %}
         </div>
         <p class="category-name">{{ category.name }}</p>

@@ -62,7 +62,7 @@
         <nav class="header-nav">
             <a href="{{ path('app_shop') }}" class="header-nav-link">Boutique</a>
             <a href="#" class="header-nav-link">Catalogues</a>
-            <a href="#" class="header-nav-link">Contacts</a>
+            <a href="{{ path('app_contact') }}" class="header-nav-link">Contacts</a>
             {% if app.user %}
                 <a href="{{ path('app_my_favorites') }}" class="header-nav-link">Favoris</a>
                 <a href="{{ path('app_messages') }}" class="header-nav-link">Messages</a>
